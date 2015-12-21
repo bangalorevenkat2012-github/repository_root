@@ -14,7 +14,7 @@
         instance_type: t2.micro
         image: ami-96f1c1c4
         wait: yes
-        exact_count: 2
+        exact_count: 1
         count_tag:
            Name: Demo
         instance_tags:
