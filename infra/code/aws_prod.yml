@@ -1,0 +1,87 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+   - /var/lib/jenkins/workspace/infra_as_code/infra/code/vars_aws.yml
+  tasks:
+   - name: ec2 provisioning
+     ec2:
+        key_name: agility_keypair
+        region: ap-southeast-1
+        instance_type: t2.micro
+        image: ami-96f1c1c4
+        wait: yes
+        exact_count: 1
+        count_tag:
+           Name: Prod
+        instance_tags:
+           Name: Prod
+     register: ec2
+   - name: Add all instance public IPs to host group
+     add_host: hostname={{ item.public_ip }} groups=managed_tomcat_ec2
+     with_items: ec2.instances
+   - name: Wait for SSH to come up
+     wait_for: host={{ item.public_dns_name }} port=22 delay=60 timeout=320 state=started
+     with_items: ec2.instances
+
+   - name: Instance Register
+     local_action:
+      module: ec2_elb
+      region: ap-southeast-1
+      instance_id: "{{ item.id }}"
+      ec2_elbs: prod
+      state: present
+     with_items: ec2.instances
+
+- hosts: managed_tomcat_ec2
+  user: ubuntu
+  gather_facts: true
+
+  vars:
+    mysql_db: agility
+    mysql_user: agility
+    mysql_password: roots
+    tomcat_admin: admin
+    tomcat_password: roots
+  tasks:
+    - name: Update apt cache
+      apt: update_cache=yes cache_valid_time=3600
+      sudo: yes
+
+    - name: Install required software
+      apt: name={{ item }} state=present
+      sudo: yes
+      with_items:
+        - apache2
+        - mysql-server
+        - tomcat7
+        - tomcat7-docs
+        - tomcat7-admin
+        - tomcat7-examples
+
+    - name: Tomcat Change Java options
+      lineinfile:
+        dest=/etc/default/tomcat7
+        regexp="^JAVA_OPTS=.*"
+        line="JAVA_OPTS=\"-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx512m -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC\""
+        state=present
+      notify:
+        - restart tomcat
+      sudo: yes
+
+    - name: Tomcat Admin User
+      lineinfile:
+        dest=/etc/tomcat7/tomcat-users.xml
+        regexp="^.*\<user username=\"{{ tomcat_admin }}.*"
+        line="<user username=\"{{ tomcat_admin }}\" password=\"{{ tomcat_password }}\" roles=\"manager-gui,admin-gui,manager-script\"/>"
+        state=present
+        insertafter="\<tomcat-users\>"
+      notify:
+        - restart tomcat
+      sudo: yes
+
+  handlers:
+    - name: restart tomcat
+      service: name=tomcat7 state=restarted
+      sudo: yes
