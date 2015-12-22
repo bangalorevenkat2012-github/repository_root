@@ -5,8 +5,7 @@
   vars_files:
    - /var/lib/jenkins/workspace/infra_as_code/infra/code/vars_aws.yml
   tasks:
-
-
+   - debug: msg={{ ec2_access_key }}
    - name: ec2 provisioning
      ec2:
         key_name: agility_keypair
