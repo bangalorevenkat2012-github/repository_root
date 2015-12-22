@@ -20,7 +20,7 @@
         instance_tags:
            Name: Test
      register: ec2
-	 
-  - name: Gathering ec2 facts
-    action: ec2_facts
+
+   - name: Gathering ec2 facts
+     action: ec2_facts
 
