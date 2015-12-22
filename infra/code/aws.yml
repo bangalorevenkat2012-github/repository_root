@@ -9,7 +9,7 @@
      ec2:
         key_name: agility_keypair
         region: ap-southeast-1
-        instance_type: t2.micro
+        instance_type: t2.nano
         image: ami-96f1c1c4
         wait: yes
         exact_count: 1
