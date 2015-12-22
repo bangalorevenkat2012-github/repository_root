@@ -7,14 +7,14 @@
 
    - name: ec2 provisioning
      ec2:
-        aws_access_key: AKIAJUNKIYK5LBYWIQOMB6PA
-        aws_secret_key: m3FFJUNK1WMrF7EJKzg0e5mhNxuPbk8fuygpVlZHxsuN
+        aws_access_key: AKIAIYK5LBYWIQOMB6PA
+        aws_secret_key: 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
         key_name: agility_keypair
         region: ap-southeast-1
         instance_type: t2.micro
         image: ami-96f1c1c4
         wait: yes
-        exact_count: 1
+        exact_count: 2
         count_tag:
            Name: Demo
         instance_tags:
