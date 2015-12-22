@@ -23,7 +23,6 @@
 
    - name: Instance Register
      local_action:
-      key_name: agility_keypair
       module: ec2_elb
       region: ap-southeast-1
       instance_id: "{{ item }}"
