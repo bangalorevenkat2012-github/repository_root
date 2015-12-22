@@ -25,6 +25,7 @@
    - name: Instance Register
      local_action:
       module: ec2_elb
+      region: ap-southeast-1
       instance_id: "{{ item }}"
       ec2_elbs: test
       state: present
