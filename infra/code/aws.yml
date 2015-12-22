@@ -7,7 +7,6 @@
   tasks:
    - debug: msg={{ ec2_access_key }}
    - debug: msg={{ ec2_secret_key }}
-   - debug: msg={{ ec2_secret_key }}
    - name: ec2 provisioning
      ec2:
         key_name: agility_keypair
