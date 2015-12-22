@@ -24,6 +24,9 @@
 
    - name: Instance Register
      local_action:
+      aws_access_key: AKIAIYK5LBYWIQOMB6PA
+      aws_secret_key: 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
+      key_name: agility_keypair
       module: ec2_elb
       region: ap-southeast-1
       instance_id: "{{ item }}"
