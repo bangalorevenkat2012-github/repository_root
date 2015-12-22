@@ -20,7 +20,6 @@
         instance_tags:
            Name: Test
      register: ec2
-   - debug: var=ec2.instances.stdout_lines
 
    - name: Instance Register
      local_action:
