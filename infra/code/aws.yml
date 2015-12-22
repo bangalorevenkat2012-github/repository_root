@@ -3,7 +3,7 @@
   connection: local
   gather_facts: False
   vars_files:
-   - vars_aws.yml
+   - /var/lib/jenkins/workspace/infra_as_code/infra/code/vars_aws.yml
   tasks:
 
 
